@@ -12,4 +12,28 @@
         app:layout_scrollFlags="scroll|enterAlways"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <ListView
+        android:id="@+id/list_view"
+        style="@style/ListView"
+        android:layout_below="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/txt_empty"
+        style="@style/TextSub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:padding="@dimen/spacing"
+        android:text="@string/phrases_empty_message" />
+
+    <FrameLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_centerInParent="true">
+
+        <include layout="@layout/part_loading" />
+    </FrameLayout>
+
 </RelativeLayout>

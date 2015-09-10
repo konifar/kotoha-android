@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Kotoha</string>
-    <string name="github_repo">GitHub repogitory</string>
+    <string name="github_repo">GitHubリポジトリ</string>
+    <string name="phrases_empty_message">名言は登録されていないみたいです(´・ω・｀)</string>
 </resources>
