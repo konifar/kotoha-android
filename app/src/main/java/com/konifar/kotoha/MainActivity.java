@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         phrases.enqueue(new Callback<List<Phrase>>() {
             @Override
             public void onResponse(Response<List<Phrase>> response) {
+                txtEmpty.setVisibility(View.GONE);
+                loading.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
                 adapter.addAll(response.body());
             }
 

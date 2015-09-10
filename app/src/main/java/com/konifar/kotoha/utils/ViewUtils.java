@@ -1,8 +1,8 @@
-package com.konifar.materialcat.utils;
+package com.konifar.kotoha.utils;
 
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.view.View;
+import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 public class ViewUtils {
 
@@ -21,12 +21,14 @@ public class ViewUtils {
         return instance;
     }
 
-    public void setBackground(View view, Drawable drawable) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            view.setBackground(drawable);
-        } else {
-            view.setBackgroundDrawable(drawable);
-        }
+    public float dpToPx(Context context, int dimenResId) {
+        float dp = context.getResources().getDimension(dimenResId);
+        return dpToPx(context, dp);
+    }
+
+    private float dpToPx(Context context, float dp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, metrics);
     }
 
 }

@@ -11,6 +11,7 @@ public class TagTextView extends TextView {
         super(context);
         setBackgroundResource(R.drawable.bg_tag_grey);
         setText(name);
+        setTextColor(getResources().getColor(R.color.grey600));
     }
 
 }
