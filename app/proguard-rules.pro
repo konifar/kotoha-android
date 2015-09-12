@@ -102,3 +102,7 @@
 -keepclassmembers class ** {
     public void onEvent*(**);
 }
+
+
+# retrolambda
+-dontwarn java.lang.invoke.*

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -72,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
     private void initListView() {
         adapter = new PhrasesArrayAdapter(this);
         listView.setAdapter(adapter);
+    }
+
+    @SuppressWarnings("unused")
+    @OnItemClick(R.id.list_view)
+    void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+        //
     }
 
     @Override
