@@ -20,9 +20,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txtEmpty;
     @Bind(R.id.loading)
     View loading;
+    @Bind(R.id.txt_error)
+    TextView txtError;
 
     private PhrasesArrayAdapter adapter;
 
@@ -54,21 +57,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadData() {
         // TODO Replace valid params
-        Call<List<Phrase>> phrases = MainApplication.API.getPhrasesByText("愛");
-        phrases.enqueue(new Callback<List<Phrase>>() {
-            @Override
-            public void onResponse(Response<List<Phrase>> response) {
-                txtEmpty.setVisibility(View.GONE);
-                loading.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
-                adapter.addAll(response.body());
-            }
+        Observable<List<Phrase>> observable = MainApplication.API.getPhrasesByText("愛");
+        observable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Phrase>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "Completed.");
+                    }
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(TAG, t.getMessage());
-            }
-        });
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        txtError.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(List<Phrase> phrases) {
+                        txtError.setVisibility(View.GONE);
+                        txtEmpty.setVisibility(View.GONE);
+                        loading.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                        adapter.addAll(phrases);
+                    }
+                });
     }
 
     private void initListView() {

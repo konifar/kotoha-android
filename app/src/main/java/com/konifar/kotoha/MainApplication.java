@@ -6,6 +6,7 @@ import com.konifar.kotoha.network.KotohaService;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 public class MainApplication extends Application {
 
@@ -13,6 +14,7 @@ public class MainApplication extends Application {
     public static final KotohaService API = new Retrofit.Builder()
             .baseUrl(Constants.API_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .build()
             .create(KotohaService.class);
 
