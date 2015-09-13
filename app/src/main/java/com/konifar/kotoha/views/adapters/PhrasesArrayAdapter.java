@@ -46,6 +46,7 @@ public class PhrasesArrayAdapter extends ArrayAdapter<Phrase> {
     private void bindData(ViewHolder holder, Phrase phrase) {
         holder.txtPhrase.setText(phrase.getText());
 
+        holder.containerTags.removeAllViews();
         List<String> tags = phrase.getTagList();
         if (tags != null && !tags.isEmpty()) {
             for (String tagName : tags) {
