@@ -53,6 +53,7 @@ dependencies {
 
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
+    compile 'com.annimon:stream:1.0.3'
 
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'org.apmem.tools:layouts:1.9@aar'

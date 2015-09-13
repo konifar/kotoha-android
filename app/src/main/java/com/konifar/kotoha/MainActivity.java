@@ -3,14 +3,18 @@ package com.konifar.kotoha;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.konifar.kotoha.models.PhraseModel;
 import com.konifar.kotoha.models.pojo.Phrase;
 import com.konifar.kotoha.utils.AppUtils;
 import com.konifar.kotoha.views.adapters.PhrasesArrayAdapter;
@@ -20,10 +24,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import rx.Observable;
 import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.edit_search)
+    EditText editSearch;
     @Bind(R.id.list_view)
     ListView listView;
     @Bind(R.id.txt_empty)
@@ -41,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtError;
 
     private PhrasesArrayAdapter adapter;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,39 +54,71 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-
+        initToolbar();
         initListView();
-
-        loadData();
     }
 
-    private void loadData() {
-        // TODO Replace valid params
-        Observable<List<Phrase>> observable = MainApplication.API.getPhrasesByText("愛");
-        observable.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Phrase>>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, "Completed.");
-                    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        subscription = Subscriptions.empty();
+    }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.e(TAG, t.getMessage());
-                        txtError.setVisibility(View.VISIBLE);
-                    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        subscription.unsubscribe();
+    }
 
-                    @Override
-                    public void onNext(List<Phrase> phrases) {
-                        txtError.setVisibility(View.GONE);
-                        txtEmpty.setVisibility(View.GONE);
-                        loading.setVisibility(View.GONE);
-                        listView.setVisibility(View.VISIBLE);
-                        adapter.addAll(phrases);
-                    }
-                });
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.e(TAG, "beforeTextChanged: " + s);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e(TAG, "onTextChanged: " + s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loadData(s.toString());
+            }
+        });
+    }
+
+    private void loadData(String searchText) {
+        adapter.clear();
+        loading.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+
+        subscription = new PhraseModel().getListByText(searchText, new Observer<List<Phrase>>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "Completed.");
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.e(TAG, t.getMessage());
+                loading.setVisibility(View.GONE);
+                txtEmpty.setVisibility(View.GONE);
+                txtError.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onNext(List<Phrase> phrases) {
+                txtError.setVisibility(View.GONE);
+                txtEmpty.setVisibility(View.GONE);
+                loading.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+                adapter.addAll(phrases);
+            }
+        });
     }
 
     private void initListView() {

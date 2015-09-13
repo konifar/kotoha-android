@@ -3,4 +3,6 @@
     <string name="github_repo">GitHubリポジトリ</string>
     <string name="phrases_empty_message">名言は登録されていないみたいです(´・ω・｀)</string>
     <string name="load_error_message">読み込めませんでした(´・ω・｀)</string>
+    <string name="search">検索する</string>
+    <string name="search_hint">検索ワードを入力</string>
 </resources>
